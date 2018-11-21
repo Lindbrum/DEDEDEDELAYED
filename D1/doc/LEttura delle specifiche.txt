@@ -1,0 +1,29 @@
+i sensori: 
+hanno dei parametri da configurare
+chi è la persona che li setta?
+i sensori ogni minuto inoltrano il dato ed uno stato;
+
+i gestori:
+esistono 
+gestore di città
+gestori di area 
+gestori di edificio...
+la user interface cambiano in base ai livelli di astrazione
+ad esempio un gestore di edificio deve vedere tutti i singoli gestori del suo edificiio, un gestore cittadino dovrà vedere i sensori di area..
+
+
+nella dashboard devono essere evidenziati gli errori:
+sensori non funzionanti 
+problemi con i valori
+devo poter aver anche una notifica push qualora ci fossero errori
+
+l'utilizzo di alcuni valori combinati può dare risultati diversi
+esempio temperatura e pressione aiutano a capire se è in corso un incendio
+
+il sistema deve gestire fino a 150000 sensori, in ogni area ce ne possono essere da 10 a 200
+
+
+come vengono inviati i dati è una scelta lasciata il gruppo. 
+quindi tecnologie, quantità di dato e storage lasciato al gruppo
+
+sensore è una componente già presente, vanno solo presi i loro dati, non possono essere interrogati, ci fornisce già il dato. 
