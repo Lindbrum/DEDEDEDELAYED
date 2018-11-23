@@ -1,0 +1,5 @@
+Priorità Use case:
+-> Cattura e processamento di un segnale: priorità alta, senza i dati non possiamo fare nulla, quindi per me, hanno alta priorità.
+-> Anomalie dati: priorità alta, devono essere riscontrate subito le eventuali anomalie.
+-> Anomalie sensori: priorità media (Qui sono molto dubbioso)
+-> Livello di dettaglio: priorità medio - bassa ( L'importante è l'allert o la notifica che potrebbe uscire come pop-up)
