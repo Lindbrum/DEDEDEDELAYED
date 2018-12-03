@@ -1,3 +1,0 @@
-unità di misura, per dati molto grandi vedi i lux per la luminosità, ha senso definire una scala di valori che permetta di avere dimensioni più piccole di dato?
-
-ha senso mantenere per ognuno dei sensori più copie di dato? potrebbe essere valutata l'utilizzo di una media?
