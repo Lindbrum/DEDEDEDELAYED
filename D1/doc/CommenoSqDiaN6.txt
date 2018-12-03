@@ -1,0 +1,2 @@
+Nel sequence diagram N.6 viene rappresentata la gestione del rivelatore di anomalie. I dati vengono trasferiti sull'interfaccia gestore
+e subito analizzati  dal "Rivelatore anomalie", per poi restituire eventuali anomalie da mostrare al gestore.
