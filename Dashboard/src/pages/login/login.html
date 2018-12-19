@@ -1,0 +1,38 @@
+<!--
+  Generated template for the LoginPage page.
+
+  See http://ionicframework.com/docs/components/#navigation for more info on
+  Ionic pages and navigation.
+-->
+<ion-header>
+  <ion-navbar color="primary">
+      <ion-title>Login</ion-title>
+  </ion-navbar>
+</ion-header>
+
+<ion-content padding>
+  <form #LoginForm="ngForm">
+    <ion-list no-lines>
+        <img src="" width="" >
+    <ion-item>
+      <ion-label stacked color="primary">User </ion-label>
+      <ion-input  placeholder="User" required clearInput>
+      </ion-input>
+    </ion-item>
+    <ion-item>
+      <ion-label stacked color="primary">Password</ion-label>
+      <ion-input type="password" placeholder="Password" required clearInput >
+      </ion-input>
+    </ion-item>
+    </ion-list>
+
+    <ion-row responsive-sm>
+    <ion-col>
+      <button ion-button (click)="Accedi(LoginForm)" type="submit" block>
+       Accedi
+      </button>
+    </ion-col>
+    </ion-row>
+  </form>
+
+</ion-content>
