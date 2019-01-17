@@ -1,15 +1,12 @@
-package model;
-
 public class Sensore {
 
     /** Variabili **/
     private int id;
-    private int temp;
+
 
     /** Costruttore **/
-    public Sensore(int id, int temp){
+    public Sensore(int id){
         this.id = id;
-        this.temp = temp;
     }
 
     /** Set e Get **/
@@ -21,11 +18,4 @@ public class Sensore {
         return this.id;
     }
 
-    public void setTemp(int temp){
-        this.temp = temp;
-    }
-
-    public int getTemp(){
-        return this.temp;
-    }
 }
