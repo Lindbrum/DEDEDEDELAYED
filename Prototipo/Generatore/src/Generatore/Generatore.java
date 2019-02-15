@@ -25,8 +25,10 @@ public class Generatore {
 
         /*Controllo se ci sono sensori*/
         if(cs.emptySensore()) {
+            long startTime = System.currentTimeMillis(); // Timer Per il tempo impiegato nella generazione dei sensori
             System.out.println("Non ci sono sensori installati");
             System.out.println("Procedo a generare i sensori");
+            System.out.println("\n");
             // Non ci sono sensore
             //Procedo ad inserire i sensori.
 
@@ -38,14 +40,13 @@ public class Generatore {
             listArea = cs.selectArea();
 
             //Chiama il generatore di sensori
-            lista = generaSensori(listDistretto,listEdficio,listArea, 10);
+            lista = generaSensori(listDistretto,listEdficio,listArea, 40);      // Numero di sensori per area passato come parametro
 
 
-            //Test
-            for(Sensore t: lista){
-                System.out.println("id:" + t.getID());
-                System.out.println("Data" + t.getUltimoInvio());
-            }
+            long stopTime = System.currentTimeMillis();
+            long elapsedTime = stopTime - startTime;
+            System.out.println("Sono stati generati: " + lista.size() + " Sensori");
+            System.out.println("Tempo impiegato per la generazione dei sensori: " + elapsedTime);
 
 
 
@@ -53,8 +54,9 @@ public class Generatore {
 
         }
 
-        //System.out.println("Ci sono sensori presenti!");
-        //System.out.println("Aggiornamento Valori");
+
+        System.out.println("Ci sono già " + cs.numeroSensori() + " Sensori installati nel sistema. Inizio procedura di aggiornamento");
+        /* Procedura di aggiornamento */
 
     }
 
@@ -65,42 +67,86 @@ public class Generatore {
         Random random = new Random();
 
         Database cs = new Database();
-
+        int massimale = 0;
+        int range = 0;
 
         for(Distretto d: distretto){
             for(Edificio e: edificio){
                 for(Area a: area){
 
                     /* Sensori di temperatura */
-                    for(int i = 1; i <= numero_sensori/3; i++){
-                        String id = "D" + d.getID() + "E" + e.getID() + "A" + a.getID() + "S" + i;   // Id composto
-                        int valore_ambientale = random.nextInt(30);                  // Valore random
+                    massimale = 30;
+                    range = 35;
+                    for(int i = 1; i <= numero_sensori/4; i++){
+                        int n = cs.numeroSensori() + 1;
+                        String id = "D" + d.getID() + "E" + e.getID() + "A" + a.getID() + "ST" + n;   // Id composto
+                        int valore_ambientale = random.nextInt(range);                  // Valore random
                         Date time = getDateTime();                                          // Prende la data attuale
 
-                        Sensore s = new Sensore(id,0, "Temperatura", valore_ambientale, 30, 60,time);
+
+                        String myArea = a.getID();
+                        int zona = Integer.parseInt(myArea);
+
+                        Sensore s = new Sensore(id,0, "Temperatura", valore_ambientale, massimale, 60,time);
+                        cs.insertSensore(n,"Temperatura", valore_ambientale, massimale,60, time, zona,1);
 
                         list.add(s);
 
                     }
 
                     /* Sensori di pressione */
-                    for(int i = 1; i <= numero_sensori/3; i++){
-                        String id = "D" + d.getID() + "E" + e.getID() + "A" + a.getID() + "S" + i;   // Id composto
-                        int valore_ambientale = random.nextInt(150);                  // Valore random
+                    massimale = 110;
+                    range = 120;
+                    for(int i = 1; i <= numero_sensori/4; i++){
+                        int n = cs.numeroSensori() + 1;
+                        String id = "D" + d.getID() + "E" + e.getID() + "A" + a.getID() + "SP" + n;   // Id composto
+                        int valore_ambientale = random.nextInt(range);                  // Valore random
                         Date time = getDateTime();                                          // Prende la data attuale
 
-                        Sensore s = new Sensore(id,0, "Pressione", valore_ambientale, 150, 60,time);
+                        String myArea = a.getID();
+                        int zona = Integer.parseInt(myArea);
+
+
+                        Sensore s = new Sensore(id,0, "Pressione", valore_ambientale, massimale, 60,time);
+                        cs.insertSensore(n,"Pressione", valore_ambientale, massimale,60, time, zona,1);
                         list.add(s);
 
                     }
 
                     /* Sensori di luminosità */
-                    for(int i = 1; i <= numero_sensori/3; i++){
-                        String id = "D" + d.getID() + "E" + e.getID() + "A" + a.getID() + "S" + i;   // Id composto
-                        int valore_ambientale = random.nextInt(50);                  // Valore random
+                    massimale = 50;
+                    range = 55;
+                    for(int i = 1; i <= numero_sensori/4; i++){
+                        int n = cs.numeroSensori() + 1;
+                        String id = "D" + d.getID() + "E" + e.getID() + "A" + a.getID() + "SL" + n;   // Id composto
+                        int valore_ambientale = random.nextInt(range);                  // Valore random
                         Date time = getDateTime();                                          // Prende la data attuale
 
-                        Sensore s = new Sensore(id,0, "Luminosità", valore_ambientale, 50, 60,time);
+                        String myArea = a.getID();
+                        int zona = Integer.parseInt(myArea);
+
+
+                        Sensore s = new Sensore(id,0, "Luminosità", valore_ambientale, massimale, 60,time);
+                        cs.insertSensore(n,"Luminosità", valore_ambientale, massimale,60, time, zona,1);
+                        list.add(s);
+
+                    }
+
+                    /* Sensori di umidità */
+                    massimale = 100;
+                    range = 110;
+                    for(int i = 1; i <= numero_sensori/4; i++){
+                        int n = cs.numeroSensori() + 1;
+                        String id = "D" + d.getID() + "E" + e.getID() + "A" + a.getID() + "SU" + n;
+                        int valore_ambientale = random.nextInt(range);
+                        Date time = getDateTime();
+
+                        String myArea = a.getID();
+                        int zona = Integer.parseInt(myArea);
+
+
+                        Sensore s = new Sensore(id,0, "Umidità", valore_ambientale, massimale, 60,time);
+                        cs.insertSensore(n,"Umidità", valore_ambientale, massimale,60, time, zona,1);
                         list.add(s);
 
                     }

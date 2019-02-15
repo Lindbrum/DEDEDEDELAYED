@@ -9,9 +9,13 @@ import Mappa.Sensore;
 import java.sql.*;
 import java.util.LinkedList;
 
-public class Database {
-    int numero_dis = 5;
 
+
+public class Database {
+    int numero_dis = 5; // NumeroDistretti
+
+
+    /* Controlla se ci sono sensori*/
     public boolean emptySensore(){
 
         Connection dbConnection = ConnectionDB.Connect();
@@ -33,6 +37,30 @@ public class Database {
         }
 
         return false;
+    }
+
+    /* Restituisce il numero di sensori */
+    public int numeroSensori(){
+
+        Connection dbConnection = ConnectionDB.Connect();
+
+        try {
+
+            Statement stmt = dbConnection.createStatement() ;
+            String query = "select count(*) AS totale from Sensore;" ;
+            ResultSet rs = stmt.executeQuery(query) ;
+
+            rs.next();
+
+            return rs.getInt("totale"); // ritorna il totale
+
+
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return 0;
     }
 
 
@@ -123,20 +151,22 @@ public class Database {
 
 
     /* Inserimento sensore DB */
-    public void insertSensore(int idSensore, String tipo, int variabileAmbientale, int massimale, int frequenzaInvio, Date ultimoinvio, int zona, String installatore){
+    public void insertSensore(int idSensore, String tipo, int variabileAmbientale, int massimale, int frequenzaInvio, java.util.Date ultimoinvio, int zona, int installatore){
         Connection dbConnection = ConnectionDB.Connect();
+
 
         String insertTableSQL = "INSERT INTO sensore" + "(idSensore, tipo, variabileAmbientale, massimale, frequenzaInvio, ultimoInvio, zona, installatore) VALUES" + "(?,?,?,?,?,?,?,?)";
         try{
+
             PreparedStatement pre = dbConnection.prepareStatement(insertTableSQL);
             pre.setInt(1, idSensore);
             pre.setString(2, tipo);
             pre.setInt(3, variabileAmbientale);
             pre.setInt(4, massimale);
             pre.setInt(5, frequenzaInvio);
-            pre.setDate(6, ultimoinvio);
+            pre.setDate(6, convertJavaDateToSqlDate(ultimoinvio));
             pre.setInt(7, zona);
-            pre.setString(8, installatore);
+            pre.setInt(8, installatore);
 
             pre.executeUpdate();
             pre.close();
@@ -147,18 +177,19 @@ public class Database {
 
     }
 
-    /* inserimento di più sensori */
-    public void insertSensori(LinkedList<Sensore> list){
+    /* Ritorna lista Sensori */
+    public LinkedList<Sensore> listaSensori(){
+        LinkedList<Sensore> list = new LinkedList<Sensore>();
         Connection dbConnection = ConnectionDB.Connect();
-        String insertTableSQL = "INSERT INTO sensore" + "(idSensore, tipo, variabileAmbientale, massimale, frequenzaInvio, ultimoInvio, zona, installatore) VALUES" + "(?,?,?,?,?,?,?,?)";
 
-        try{
-            PreparedStatement pre = dbConnection.prepareStatement(insertTableSQL);
+        try {
+            Statement stmt = dbConnection.createStatement() ;
+            String query = "select * from sensore";
+            ResultSet rs = stmt.executeQuery(query) ;
 
-
-            for(Sensore l: list){
-                String sottostringa = l.getTipo().substring(1,2);
-
+            while(rs.next()){
+                //Sensore s = new Sensore(id,0, "Luminosità", valore_ambientale, massimale, 60,time);
+                //list.add(s);
             }
 
         } catch (SQLException e) {
@@ -166,6 +197,12 @@ public class Database {
         }
 
 
+        return list;
+    }
+
+    /*Metodo per convertire il tipo Date di Java al tipo Date mysql*/
+    public java.sql.Date convertJavaDateToSqlDate(java.util.Date date) {
+        return new java.sql.Date(date.getTime());
     }
 
 }
