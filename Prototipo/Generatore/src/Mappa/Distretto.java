@@ -1,7 +1,8 @@
 package Mappa;
 
 public class Distretto extends Città {
-    public Distretto(String ID, int alert, int numElementi) {
+    private String nome;
+    public Distretto(int ID, int alert, int numElementi) {
         super(ID, alert, numElementi);
     }
 }

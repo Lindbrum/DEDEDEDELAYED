@@ -1,19 +1,19 @@
 package Mappa;
 
 public abstract class ElementoMappa {
-    private String ID;
+    private int ID;
     private int alert;
 
-    public ElementoMappa(String ID, int alert) {
+    public ElementoMappa(int ID, int alert) {
         this.ID = ID;
         this.alert = alert;
     }
 
-    public String getID() {
+    public int getID() {
         return ID;
     }
 
-    public void setID(String ID) {
+    public void setID(int ID) {
         this.ID = ID;
     }
 

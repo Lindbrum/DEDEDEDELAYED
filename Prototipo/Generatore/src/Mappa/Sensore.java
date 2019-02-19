@@ -4,15 +4,13 @@ import java.util.Date;
 
 public class Sensore extends ElementoMappa {
     private String tipo;
-    private float variabileAmbientale;
     private float massimale;
     private int frequenzaInvio;
     private Date ultimoInvio;
 
-    public Sensore(String ID, int alert, String tipo, float variabileAmbientale, float massimale, int frequenzaInvio, Date ultimoInvio) {
+    public Sensore(int ID, int alert, String tipo, float massimale, int frequenzaInvio, Date ultimoInvio) {
         super(ID, alert);
         this.tipo = tipo;
-        this.variabileAmbientale = variabileAmbientale;
         this.massimale = massimale;
         this.frequenzaInvio = frequenzaInvio;
         this.ultimoInvio = ultimoInvio;
@@ -24,14 +22,6 @@ public class Sensore extends ElementoMappa {
 
     public void setTipo(String tipo) {
         this.tipo = tipo;
-    }
-
-    public float getVariabileAmbientale() {
-        return variabileAmbientale;
-    }
-
-    public void setVariabileAmbientale(float variabileAmbientale) {
-        this.variabileAmbientale = variabileAmbientale;
     }
 
     public float getMassimale() {

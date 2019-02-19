@@ -12,7 +12,7 @@ import java.util.LinkedList;
 
 
 public class Database {
-    int numero_dis = 5; // NumeroDistretti
+    int numero_dis = 10; // NumeroDistretti
 
 
     /* Controlla se ci sono sensori*/
@@ -29,12 +29,16 @@ public class Database {
             rs.next();
 
             if(rs.getInt("totale") == 0){
+                dbConnection.close();
                 return true;
             }
 
+
+            dbConnection.close();
         } catch (SQLException e) {
             e.printStackTrace();
         }
+
 
         return false;
     }
@@ -74,18 +78,19 @@ public class Database {
 
         try {
             Statement stmt = dbConnection.createStatement() ;
-            String query = "select * from zona WHERE tipologia = 'area' OR tipologia = 'Area';" ;
+            String query = "select * from area";
             ResultSet rs = stmt.executeQuery(query) ;
 
             while(rs.next()){
 
-                id = rs.getInt("idZona");
+                id = rs.getInt("idArea");
                 alert = rs.getInt("alert");
 
-                Area a = new Area(Integer.toString(id), alert, numero_dis);      //NumeroSensoriPerOgni Area 10
+                Area a = new Area(id, alert, numero_dis);      //NumeroSensoriPerOgni Area 10
                 list.add(a);
 
             }
+            dbConnection.close();
 
         } catch (SQLException e) {
             e.printStackTrace();
@@ -104,16 +109,17 @@ public class Database {
 
         try {
             Statement stmt = dbConnection.createStatement() ;
-            String query = "select * from zona where tipologia = 'Edificio' or tipologia = 'edificio'";
+            String query = "select * from edificio";
             ResultSet rs = stmt.executeQuery(query) ;
 
             while(rs.next()){
-                id = rs.getInt("idZona");
+                id = rs.getInt("idEdificio");
                 alert = rs.getInt("alert");
 
-                Edificio e = new Edificio(Integer.toString(id), alert, numero_dis);
+                Edificio e = new Edificio(id, alert, numero_dis);
                 list.add(e);
             }
+            dbConnection.close();
 
         } catch (SQLException e) {
             e.printStackTrace();
@@ -131,16 +137,18 @@ public class Database {
 
         try {
             Statement stmt = dbConnection.createStatement() ;
-            String query = "select * from zona WHERE tipologia = 'Distretto' or tipologia = 'distretto'" ;
+            String query = "select * from distretto" ;
             ResultSet rs = stmt.executeQuery(query) ;
 
             while(rs.next()){
-                id = rs.getInt("idZona");
+                id = rs.getInt("idDistretto");
                 alert = rs.getInt("alert");
 
-                Distretto d = new Distretto(Integer.toString(id), alert, numero_dis);
+                Distretto d = new Distretto(id, alert, numero_dis);
                 list.add(d);
             }
+
+            dbConnection.close();
 
         } catch (SQLException e) {
             e.printStackTrace();
@@ -150,32 +158,111 @@ public class Database {
     }
 
 
-    /* Inserimento sensore DB */
-    public void insertSensore(int idSensore, String tipo, int variabileAmbientale, int massimale, int frequenzaInvio, java.util.Date ultimoinvio, int zona, int installatore){
+    /* Inserimento Edificio*/
+    public void insertEdifici(String nome, int idDistretto, int alert){
+        Connection dbConnection = ConnectionDB.Connect();
+
+        String insertTableSQL = "INSERT INTO edificio" + "(nome, idDistretto, alert) VALUES" + "(?,?,?)";
+        try{
+            PreparedStatement pre = dbConnection.prepareStatement(insertTableSQL);
+            pre.setString(1, nome);
+            pre.setInt(2, idDistretto);
+            pre.setInt(3,alert);
+            pre.executeUpdate();
+            pre.close();
+            dbConnection.close();
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /* Inserimento Distretto */
+    public void insertDistretto(String nome, int alert){
+        Connection dbConnection = ConnectionDB.Connect();
+
+        String insertTableSQL = "INSERT INTO distretto" + "(nome, alert) VALUES" + "(?,?)";
+        try{
+            PreparedStatement pre = dbConnection.prepareStatement(insertTableSQL);
+            pre.setString(1, nome);
+            pre.setInt(2, alert);
+            pre.executeUpdate();
+
+            dbConnection.close();
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /* inserimento Area */
+    public void insertArea(String nome, int Edificio, int alert){
+        Connection dbConnection = ConnectionDB.Connect();
+
+        String insertTableSQL = "INSERT INTO area" + "(nome, alert, idEdificio) VALUES" + "(?,?,?)";
+        try{
+            PreparedStatement pre = dbConnection.prepareStatement(insertTableSQL);
+            pre.setString(1, nome);
+            pre.setInt(2,alert);
+            pre.setInt(3, Edificio);
+            pre.executeUpdate();
+            pre.close();
+
+            dbConnection.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    /*Inserimento gestore */
+    public void insertGestore(int id,String username, String pass, String tipo, int admin){
+        Connection dbConnection = ConnectionDB.Connect();
+        String insertTableSQL = "INSERT INTO utente" + "(idUtente, username, password, tipologia, admin) VALUES" + "(?,?,?,?,?)";
+        try{
+            PreparedStatement pre = dbConnection.prepareStatement(insertTableSQL);
+            pre.setInt(1, id);
+            pre.setString(2, username);
+            pre.setString(3, pass);
+            pre.setString(4, tipo);
+            pre.setInt(5, admin);
+            pre.executeUpdate();
+            pre.close();
+            dbConnection.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+
+    }
+
+    /* Inserimento sensore DB e primo segnale*/
+    public void insertSensore(String tipo, int massimale, int frequenzaInvio, java.util.Date ultimoinvio,int area, int gestore){
         Connection dbConnection = ConnectionDB.Connect();
 
 
-        String insertTableSQL = "INSERT INTO sensore" + "(idSensore, tipo, variabileAmbientale, massimale, frequenzaInvio, ultimoInvio, zona, installatore) VALUES" + "(?,?,?,?,?,?,?,?)";
+        String insertTableSQL = "INSERT INTO sensore" + "(tipo, massimale, frequenzaInvio, ultimoInvio, area, gestore) VALUES" + "(?,?,?,?,?,?)";
         try{
 
             PreparedStatement pre = dbConnection.prepareStatement(insertTableSQL);
-            pre.setInt(1, idSensore);
-            pre.setString(2, tipo);
-            pre.setInt(3, variabileAmbientale);
-            pre.setInt(4, massimale);
-            pre.setInt(5, frequenzaInvio);
-            pre.setDate(6, convertJavaDateToSqlDate(ultimoinvio));
-            pre.setInt(7, zona);
-            pre.setInt(8, installatore);
+            pre.setString(1, tipo);
+            pre.setInt(2, massimale);
+            pre.setInt(3, frequenzaInvio);
+            pre.setDate(4, convertJavaDateToSqlDate(ultimoinvio));
+            pre.setInt(5, area);
+            pre.setInt(6, gestore);
 
             pre.executeUpdate();
             pre.close();
+            dbConnection.close();
 
         } catch (SQLException e) {
             e.printStackTrace();
         }
 
     }
+
+
 
     /* Ritorna lista Sensori */
     public LinkedList<Sensore> listaSensori(){

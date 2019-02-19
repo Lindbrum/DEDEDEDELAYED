@@ -3,7 +3,7 @@ package Mappa;
 public abstract class Città extends ElementoMappa {
     private int numElementi;
 
-    public Città(String ID, int alert, int numElementi) {
+    public Città(int ID, int alert, int numElementi) {
         super(ID, alert);
         this.numElementi = numElementi;
     }
