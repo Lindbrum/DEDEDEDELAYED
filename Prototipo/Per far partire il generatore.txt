@@ -1,0 +1,5 @@
+
+-> Importate il DB(Lo trovate in Database -> ModificaDB -> sql 2.0 )
+-> Potete usare qualsiasi IDE (Il sorgente sta tutto in src, il main si trova dentro il package Generatore), io ho utilizzato intelliJ
+-> Una volta importato i file, inserite i driver mysql-connector che potete trovare all'interno della cartella Generatore -> DriverMySql
+-> Modificate se necessario i parametri di connessione al DB, che si trovano nel package Server -> ConnectionDB

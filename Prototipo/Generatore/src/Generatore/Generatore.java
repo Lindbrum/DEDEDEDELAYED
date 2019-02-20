@@ -20,6 +20,7 @@ public class Generatore {
         LinkedList<Edificio> listEdificio = null;
         LinkedList<Distretto> listDistretto = null;
         LinkedList<Area> listArea = null;
+        LinkedList<Sensore> listSensore = null;
 
 
         /*Controllo se ci sono sensori*/
@@ -28,11 +29,9 @@ public class Generatore {
             int numero_distretti = 5;
             int numer_edifici = 20;
             int numero_aree = 10;
-            int numero_sensori = 5;
 
 
             System.out.println("Non ci sono sensori installati");
-            System.out.println("Procedo a generare i sensori");
             System.out.println("\n");
 
             // generazione admin installazione
@@ -59,11 +58,11 @@ public class Generatore {
             System.out.println("--- GENERATE LE AREE ---");
 
 
+            System.out.println("\n");
+            System.out.println("--- GENERAZIONE SENSORI ---");
             long startTime = System.currentTimeMillis(); // Timer Per il tempo impiegato nella generazione dei sensori
             //Chiama il generatore di sensori
-            generaSensori(listDistretto,listEdificio,listArea, numero_sensori);      // Numero di sensori per area passato come parametro
-
-
+            generaSensori(listArea);      // Genera i sensori per ogni area (Ne inserisce 1 per tipo)
 
             long stopTime = System.currentTimeMillis();
             long elapsedTime = stopTime - startTime;
@@ -71,64 +70,70 @@ public class Generatore {
             System.out.println("---SONO STATI GENERATI: " + cs.numeroSensori() + " SENSORI --");
             System.out.println("Tempo impiegato per la generazione dei sensori: " + elapsedTime + "ms");
 
+            startTime = System.currentTimeMillis();
+            // Generazione segnali per ogni sensore
+            listSensore = cs.selectSensori();
+            System.out.println("\n");
+            System.out.println("--- INSERIMENTO PRIMI SEGNALI ---");
+            generaSegnale(listSensore, 2);                      // Numero segnali per ogni sensore
 
+            stopTime = System.currentTimeMillis();
+            elapsedTime = stopTime - startTime;
 
-
+            System.out.println("\n");
+            System.out.println("--- SEGNALI GENERATI IN "+ elapsedTime +" ---");
 
         }
 
 
-        System.out.println("Ci sono già " + cs.numeroSensori() + " Sensori installati nel sistema. Inizio procedura di aggiornamento");
+        System.out.println("\n");
+        System.out.println("Ci sono: " + cs.numeroSensori() + " Sensori installati nel sistema. Inizio procedura di aggiornamento");
         /* Procedura di aggiornamento */
+        while(true){
+
+        }
 
     }
 
 
     /* Genera una lista di sensori, il numero di sesnori gli viene passato come parametro come anche il tipo e il massimale */
-    static void generaSensori(LinkedList<Distretto> distretto, LinkedList<Edificio> edificio, LinkedList<Area> area, int numero_sensori){
-        Random random = new Random();
+    static void generaSensori(LinkedList<Area> area){
 
         Database cs = new Database();
+        Date time = null;
         int massimale = 0;
 
+        for(Area a: area){
 
-        for(Distretto d: distretto){
-            for(Edificio e: edificio){
-                for(Area a: area){
+            /* Sensori di temperatura */
+            massimale = 30;
 
-                    /* Sensori di temperatura */
-                    massimale = 30;
-                    for(int i = 1; i <= numero_sensori/4; i++){
-                        Date time = getDateTime();                                          // Prende la data attuale
-                        cs.insertSensore("Temperatura", massimale,60, time, a.getID(),1);   //Inserisce il sensore.
-                    }
+            time = getDateTime();                                          // Prende la data attuale
+            cs.insertSensore("Temperatura", massimale,60, time, a.getID(),1);   //Inserisce il sensore.
 
-                    /* Sensori di pressione */
-                    massimale = 110;
-                    for(int i = 1; i <= numero_sensori/4; i++){
-                        Date time = getDateTime();                                          // Prende la data attuale
-                        cs.insertSensore("Pressione", massimale,60, time, a.getID(),1);  //Inserisce il sensore.
-                    }
 
-                    /* Sensori di luminosità */
-                    massimale = 50;
-                    for(int i = 1; i <= numero_sensori/4; i++){
-                        Date time = getDateTime();                                          // Prende la data attuale
-                        cs.insertSensore("Luminosità ", massimale,60, time, a.getID(),1);
-                    }
+            /* Sensori di pressione */
+            massimale = 110;
 
-                    /* Sensori di umidità */
-                    massimale = 100;
+            time = getDateTime();                                          // Prende la data attuale
+            cs.insertSensore("Pressione", massimale,60, time, a.getID(),1);  //Inserisce il sensore.
 
-                    for(int i = 1; i <= numero_sensori/4; i++){
-                        Date time = getDateTime();
-                        cs.insertSensore("Umidità ", massimale,60, time, a.getID(),1);
-                    }
 
-                }
-            }
+            /* Sensori di luminosità */
+            massimale = 50;
+
+            time = getDateTime();                                          // Prende la data attuale
+            cs.insertSensore("Luminosità", massimale,60, time, a.getID(),1);
+
+            /* Sensori di umidità */
+            massimale = 100;
+
+
+            time = getDateTime();
+            cs.insertSensore("Umidità", massimale,60, time, a.getID(),1);
+
+
         }
-
     }
 
 
@@ -168,7 +173,6 @@ public class Generatore {
     /* Metodo che prende la data attuale */
     private static Date getDateTime() {
         Date dNow = new Date( );
-        SimpleDateFormat ft = new SimpleDateFormat ("E yyyy.MM.dd 'at' hh:mm:ss a zzz");
 
         return dNow;
     }
@@ -179,7 +183,34 @@ public class Generatore {
         cs.insertGestore(1, "admin", "admin", null, 1);
     }
 
+    /* Genera Segnale */
+    static void generaSegnale(LinkedList<Sensore> list, int numero_segnali){
+        Database cs = new Database();
+        Random rand = new Random();
+        Date time;
 
-
-
+        for(Sensore s: list){
+            if(s.getTipo().equals("Temperatura")){
+                for(int i = 1; i <= numero_segnali; i++){
+                    time = getDateTime();
+                    cs.insertSegnali(s.getID(), time, rand.nextInt(30),0);
+                }
+            }else if(s.getTipo().equals("Pressione")){
+                for(int i = 1; i <= numero_segnali; i++){
+                    time = getDateTime();
+                    cs.insertSegnali(s.getID(), time, rand.nextInt(110),0);
+                }
+            }else if(s.getTipo().equals("Luminosità")) {
+                for (int i = 1; i <= numero_segnali; i++) {
+                    time = getDateTime();
+                    cs.insertSegnali(s.getID(), time, rand.nextInt(50), 0);
+                }
+            } else if(s.getTipo().equals("Umidità")) {
+                for(int i = 1; i <= numero_segnali; i++){
+                    time = getDateTime();
+                    cs.insertSegnali(s.getID(), time, rand.nextInt(100),0);
+                }
+            }
+        }
+    }
 }
