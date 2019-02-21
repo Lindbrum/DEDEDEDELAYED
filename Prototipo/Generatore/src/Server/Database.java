@@ -226,9 +226,9 @@ public class Database {
     }
 
     /* Inserimento sensore DB e primo segnale*/
-    public void insertSensore(String tipo, int massimale, int frequenzaInvio, java.util.Date ultimoinvio,int area, int gestore){
+    public void insertSensore(String tipo, int massimale, int frequenzaInvio, int area, int gestore){
 
-
+        java.sql.Timestamp date = new java.sql.Timestamp(new java.util.Date().getTime());
         String insertTableSQL = "INSERT INTO sensore" + "(tipo, massimale, frequenzaInvio, ultimoInvio, area, gestore) VALUES" + "(?,?,?,?,?,?)";
         try{
 
@@ -236,7 +236,7 @@ public class Database {
             pre.setString(1, tipo);
             pre.setInt(2, massimale);
             pre.setInt(3, frequenzaInvio);
-            pre.setDate(4, convertJavaDateToSqlDate(ultimoinvio));
+            pre.setTimestamp(4, date);
             pre.setInt(5, area);
             pre.setInt(6, gestore);
 
@@ -250,13 +250,14 @@ public class Database {
     }
 
     /* InserimentoSegnali */
-    public void insertSegnali(int idSensore, java.util.Date ultimoinvio, float variabile_ambientale, int alert){
+    public void insertSegnali(int idSensore, float variabile_ambientale, int alert){
+        java.sql.Timestamp date = new java.sql.Timestamp(new java.util.Date().getTime());
         String insertTableSQL = "INSERT INTO segnale" + "(sensore, timestamp, variabileAmbientale, alert) VALUES" + "(?,?,?,?)";
 
         try{
             PreparedStatement pre = dbConnection.prepareStatement(insertTableSQL);
             pre.setInt(1, idSensore);
-            pre.setDate(2, convertJavaDateToSqlDate(ultimoinvio));
+            pre.setTimestamp(2, date);
             pre.setFloat(3, variabile_ambientale);
             pre.setInt(4, alert);
             pre.executeUpdate();
@@ -328,6 +329,53 @@ public class Database {
             e.printStackTrace();
         }
         return list;
+    }
+
+    /* update segnale per tipologia */
+    public void updateSegnale(int idSegnale, float valore_ambientale){
+        java.sql.Timestamp date = new java.sql.Timestamp(new java.util.Date().getTime());
+        String approveReview = "UPDATE `segnale` SET `variabileAmbientale` = ?, `timestamp` = ? WHERE `idSegnale` = ?";
+        // UPDATE Sensore SET massimale = 35 WHERE idSensore = 1
+        try{
+            PreparedStatement pre = dbConnection.prepareStatement(approveReview);
+            pre.setFloat(1, valore_ambientale);
+            pre.setTimestamp(2, date);
+            pre.setInt(3, idSegnale);
+            pre.executeUpdate();
+            pre.close();
+        }   catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /* Cambio alert Segnale */
+    public void updateAlertSegnale(int sensore, int alert){
+        String approveReview = "UPDATE `segnale` SET `alert` = ? WHERE `idSensore` = ?";
+        // UPDATE Sensore SET massimale = 35 WHERE idSensore = 1
+        try{
+            PreparedStatement pre = dbConnection.prepareStatement(approveReview);
+            pre.setInt(1, alert);
+            pre.setInt(2, sensore);
+            pre.executeUpdate();
+            pre.close();
+        }   catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /* Cambio alert Area */
+    public void updateAlertArea(int idArea, int alert){
+        String approveReview = "UPDATE `area` SET `alert` = ? WHERE `idArea` = ?";
+        // UPDATE Sensore SET massimale = 35 WHERE idSensore = 1
+        try{
+            PreparedStatement pre = dbConnection.prepareStatement(approveReview);
+            pre.setInt(1, alert);
+            pre.setInt(2, idArea);
+            pre.executeUpdate();
+
+        }   catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
 

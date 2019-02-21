@@ -5,12 +5,13 @@ import Server.Database;
 import Mappa.Sensore;
 import Mappa.Distretto;
 import Mappa.Area;
+import Server.Segnale;
 
 import java.util.LinkedList;
 import java.util.Random;
 
 import java.util.Date;
-import java.text.SimpleDateFormat;
+
 
 
 public class Generatore {
@@ -75,13 +76,13 @@ public class Generatore {
             listSensore = cs.selectSensori();
             System.out.println("\n");
             System.out.println("--- INSERIMENTO PRIMI SEGNALI ---");
-            generaSegnale(listSensore, 2);                      // Numero segnali per ogni sensore
+            generaSegnale(listSensore, 1);                      // Numero segnali per ogni sensore
 
             stopTime = System.currentTimeMillis();
             elapsedTime = stopTime - startTime;
 
             System.out.println("\n");
-            System.out.println("--- SEGNALI GENERATI IN "+ elapsedTime +" ---");
+            System.out.println("--- SEGNALI GENERATI IN "+ elapsedTime +" ms ---");
 
         }
 
@@ -90,50 +91,59 @@ public class Generatore {
         System.out.println("Ci sono: " + cs.numeroSensori() + " Sensori installati nel sistema. Inizio procedura di aggiornamento");
         /* Procedura di aggiornamento */
         while(true){
+            LinkedList<Segnale> segnali;
+            System.out.println("\n");
+            System.out.println("--- INIZIO AGGIORNAMENTO DATI ---");
+            long startTime = System.currentTimeMillis();
+            // Chiamata metodo di aggiornamento
+            segnali = updateSegnali();
+
+            long stopTime = System.currentTimeMillis();
+            long elapsedTime = stopTime - startTime;
+            System.out.println("Dati aggiornati in: " + elapsedTime + " ms");
+
+            // Chiamata metodo controllo pericoli
 
         }
 
     }
 
 
+
     /* Genera una lista di sensori, il numero di sesnori gli viene passato come parametro come anche il tipo e il massimale */
     static void generaSensori(LinkedList<Area> area){
 
         Database cs = new Database();
-        Date time = null;
+
         int massimale = 0;
 
         for(Area a: area){
 
             /* Sensori di temperatura */
-            massimale = 30;
-
-            time = getDateTime();                                          // Prende la data attuale
-            cs.insertSensore("Temperatura", massimale,60, time, a.getID(),1);   //Inserisce il sensore.
+            cs.insertSensore("Temperatura", massimale,60, a.getID(),1);   //Inserisce il sensore.
 
 
             /* Sensori di pressione */
             massimale = 110;
 
-            time = getDateTime();                                          // Prende la data attuale
-            cs.insertSensore("Pressione", massimale,60, time, a.getID(),1);  //Inserisce il sensore.
+            cs.insertSensore("Pressione", massimale,60, a.getID(),1);  //Inserisce il sensore.
 
 
             /* Sensori di luminosità */
             massimale = 50;
 
-            time = getDateTime();                                          // Prende la data attuale
-            cs.insertSensore("Luminosità", massimale,60, time, a.getID(),1);
+
+            cs.insertSensore("Luminosità", massimale,60, a.getID(),1);
 
             /* Sensori di umidità */
-            massimale = 100;
+            massimale = 80;
 
 
-            time = getDateTime();
-            cs.insertSensore("Umidità", massimale,60, time, a.getID(),1);
+            cs.insertSensore("Umidità", massimale,60, a.getID(),1);
 
 
         }
+        cs.closeConnection();
     }
 
 
@@ -142,8 +152,9 @@ public class Generatore {
         Database cs = new Database();
         for(int i = 1; i <= n; i++){
             String nome = "Distretto" + i;
-            cs.insertDistretto(nome,0);
+            cs.insertDistretto(nome,1);
         }
+        cs.closeConnection();
     }
 
     /* Generatore di Edifici per ogni distretto */
@@ -152,9 +163,10 @@ public class Generatore {
         for(Distretto l: list){
             for(int i = 1; i <= numero_edifici; i++){
                 String nome = "Edificio" + i;
-                cs.insertEdifici(nome, l.getID(),0);
+                cs.insertEdifici(nome, l.getID(),1);
             }
         }
+        cs.closeConnection();
     }
 
     /* Genera Area per ogni edificio */
@@ -163,16 +175,17 @@ public class Generatore {
         for(Edificio l: list){
             for(int i = 1; i <= numero_Aree; i++){
                 String nome = "Area" + i;
-                cs.insertArea(nome, l.getID(),0);
+                cs.insertArea(nome, l.getID(),1);
             }
         }
-
+        cs.closeConnection();
     }
 
 
     /* Metodo che prende la data attuale */
     private static Date getDateTime() {
         Date dNow = new Date( );
+
 
         return dNow;
     }
@@ -187,30 +200,61 @@ public class Generatore {
     static void generaSegnale(LinkedList<Sensore> list, int numero_segnali){
         Database cs = new Database();
         Random rand = new Random();
-        Date time;
 
         for(Sensore s: list){
             if(s.getTipo().equals("Temperatura")){
                 for(int i = 1; i <= numero_segnali; i++){
-                    time = getDateTime();
-                    cs.insertSegnali(s.getID(), time, rand.nextInt(30),0);
+                    cs.insertSegnali(s.getID(), rand.nextInt(30),1);
                 }
             }else if(s.getTipo().equals("Pressione")){
                 for(int i = 1; i <= numero_segnali; i++){
-                    time = getDateTime();
-                    cs.insertSegnali(s.getID(), time, rand.nextInt(110),0);
+                    cs.insertSegnali(s.getID(), rand.nextInt(110),1);
                 }
             }else if(s.getTipo().equals("Luminosità")) {
                 for (int i = 1; i <= numero_segnali; i++) {
-                    time = getDateTime();
-                    cs.insertSegnali(s.getID(), time, rand.nextInt(50), 0);
+                    cs.insertSegnali(s.getID(), rand.nextInt(50), 1);
                 }
             } else if(s.getTipo().equals("Umidità")) {
                 for(int i = 1; i <= numero_segnali; i++){
-                    time = getDateTime();
-                    cs.insertSegnali(s.getID(), time, rand.nextInt(100),0);
+                    cs.insertSegnali(s.getID(), rand.nextInt(100),1);
                 }
             }
         }
+
+        // chiusura connessione DB
+        cs.closeConnection();
+    }
+
+    /* update Segnali */
+    static LinkedList<Segnale> updateSegnali(){
+        LinkedList<Segnale> listSegnaliOld;
+        LinkedList<Sensore> listSensori;
+        LinkedList<Segnale> listSegnaliNew;
+        Random rand = new Random();
+        Database cs = new Database();
+
+        listSegnaliOld = cs.selectSegnali();
+        listSensori = cs.selectSensori();
+
+        for(Sensore sensore: listSensori){
+            for(Segnale s: listSegnaliOld){
+                if(sensore.getID() == s.getIDSensore()){
+                    if(sensore.getTipo().equals("Temperatura")){
+                        cs.updateSegnale(s.getIDSegnale(), rand.nextInt(40));
+                    } else if(sensore.getTipo().equals("Pressione")){
+                        cs.updateSegnale(s.getIDSegnale(), rand.nextInt(130));
+                    } else if(sensore.getTipo().equals("Luminosità")){
+                        cs.updateSegnale(s.getIDSegnale(), rand.nextInt(70));
+                    } else if(sensore.getTipo().equals("Umidità")){
+                        cs.updateSegnale(s.getIDSegnale(), rand.nextInt(110));
+                    }
+                }
+            }
+        }
+        listSegnaliNew = cs.selectSegnali();
+
+        cs.closeConnection();
+
+        return listSegnaliNew;
     }
 }
