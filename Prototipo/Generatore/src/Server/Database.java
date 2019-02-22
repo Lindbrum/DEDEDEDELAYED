@@ -4,6 +4,7 @@ import Mappa.Area;
 import Mappa.Distretto;
 import Mappa.Edificio;
 import Mappa.Sensore;
+import Users.Gestore;
 
 
 import java.sql.*;
@@ -379,7 +380,6 @@ public class Database {
     }
 
 
-
     /* Chisuura connessione */
     public void closeConnection(){
         try {
@@ -389,9 +389,61 @@ public class Database {
         }
     }
 
-    /*Metodo per convertire il tipo Date di Java al tipo Date mysql*/
-    public java.sql.Date convertJavaDateToSqlDate(java.util.Date date) {
-        return new java.sql.Date(date.getTime());
+    /* Aggiornamento alert Distretto */
+    public void updateAlertDistretto(int idDistretto, int alert){
+        String approveReview = "UPDATE `distretto` SET `alert` = ? WHERE `idDistretto` = ?";
+        // UPDATE Sensore SET massimale = 35 WHERE idSensore = 1
+        try{
+            PreparedStatement pre = dbConnection.prepareStatement(approveReview);
+            pre.setInt(1, alert);
+            pre.setInt(2, idDistretto);
+            pre.executeUpdate();
+            pre.close();
+        }   catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    /* Aggiornamento alert Edificio */
+    public void updateAlertEdificio(int idEdificio, int alert){
+        String approveReview = "UPDATE `edificio` SET `alert` = ? WHERE `idEdificio` = ?";
+        // UPDATE Sensore SET massimale = 35 WHERE idSensore = 1
+        try{
+            PreparedStatement pre = dbConnection.prepareStatement(approveReview);
+            pre.setInt(1, alert);
+            pre.setInt(2, idEdificio);
+            pre.executeUpdate();
+            pre.close();
+        }   catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    /*  Per il Client */
+    /* login */
+    public Gestore loginGestore(String username, String pass){
+        String query = "select * FROM utente WHERE username = ? AND password = ?" ;
+        Gestore gestore = null;
+
+        try{
+
+            PreparedStatement pre = dbConnection.prepareStatement(query);
+            pre.setString(1, username);
+            pre.setString(2, pass);
+            ResultSet rs = pre.executeQuery();
+
+
+            while(rs.next()){
+                gestore = new Gestore(rs.getString("username"), rs.getString("password"), rs.getInt("idUtente"), rs.getString("tipologia") );
+            }
+
+        }   catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return gestore;
     }
 
 }
